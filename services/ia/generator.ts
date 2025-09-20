@@ -12,11 +12,10 @@ export async function generatorExecuse(execuse: string) {
         },
         systemInstruction: [
             {
-                text: `Estou fazendo um app onde o usuario irá entrar com um evento e quero responder um desculpa esfarrapada, quero que seja engraçada e que não ofenda ninguém.
-
-Responda o texto diretamente em texto puro com a desculpa escolhida, sem links.
-
-Sugira apenas um desculpa por entrada.`,
+                text:
+                    `Estou fazendo um app onde o usuario irá entrar com um evento e quero responder um desculpa esfarrapada, quero que seja engraçada e que não ofenda ninguém.
+                Responda o texto diretamente em texto puro com a desculpa escolhida, sem links.
+                Sugira apenas um desculpa por entrada.`,
             }
         ],
     };
