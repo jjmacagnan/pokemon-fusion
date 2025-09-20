@@ -32,14 +32,18 @@ Sugira apenas um desculpa por entrada.`,
         },
     ];
 
-    const response = await ai.models.generateContent({
-        model,
-        config,
-        contents,
-    });
+    try {
+        const response = await ai.models.generateContent({
+            model,
+            config,
+            contents,
+        });
 
-    const result = response?.candidates?.[0]?.content?.parts?.[0]?.text;
-    return result;
+        const result = response?.candidates?.[0]?.content?.parts?.[0]?.text;
+        return result;
+    } catch (error) {
+        return "Preciso levar minha vó ao jiu jitsu!"
+    }
 }
 
 
