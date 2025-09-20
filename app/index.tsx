@@ -1,6 +1,7 @@
 import { generatorExecuse } from "@/services/ia/generator";
 import { styles } from "@/styles";
-import { useState } from "react";
+import { MotiView } from 'moti';
+import React, { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 
 export default function Index() {
@@ -38,10 +39,13 @@ export default function Index() {
         <Text style={styles.button_text}>{isLoading ? "Carregando ..." : "Gerar desculpa infalível!"}</Text>
       </TouchableOpacity>
 
-      {answer && <View style={styles.card}>
+      {answer && <MotiView
+        from={{ opacity: 0, translateY: 200 }}
+        animate={{ opacity: 1, translateY: 0 }}
+        style={styles.card}>
         <Text style={styles.card_title}>Sua desculpa está pronta:</Text>
         <Text style={styles.card_text}>{answer}</Text>
-      </View>}
+      </MotiView>}
     </View>
   );
 }
