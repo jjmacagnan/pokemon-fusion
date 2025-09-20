@@ -2,7 +2,7 @@ import { generatorExecuse } from "@/services/ia/generator";
 import { styles } from "@/styles";
 import { MotiView } from 'moti';
 import React, { useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { StatusBar, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 export default function Index() {
   const [excuse, setExcuse] = useState('')
@@ -27,6 +27,7 @@ export default function Index() {
   return (
     <View
       style={styles.container}>
+      <StatusBar barStyle="dark-content"></StatusBar>
       <Text style={styles.title}>Desculpator 3000</Text>
       <Text style={styles.subtitle}>Sua maquina de desculpas profissional</Text>
       <TextInput
