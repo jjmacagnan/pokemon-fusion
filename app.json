@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "desculpator",
-    "slug": "desculpator",
+    "name": "pokemon-fusion",
+    "slug": "pokemon",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "desculpator",
+    "scheme": "pokemon-fusion",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
