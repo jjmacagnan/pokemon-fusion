@@ -1,20 +1,29 @@
-import {
-    GoogleGenAI,
-} from '@google/genai';
+import { GoogleGenAI } from '@google/genai';
 
-export async function generatorPokemonFusion(pokemon1: string, pokemon2: string) {
-  const ai = new GoogleGenAI({
-    apiKey: process.env.EXPO_PUBLIC_GEMINI_API_KEY,
-  });
+/**
+ * Gera a descrição da fusão de dois Pokémon usando Google Gemini
+ */
+export async function generatorPokemonFusion(
+  pokemon1: string, 
+  pokemon2: string
+): Promise<string | null> {
+  try {
+    const apiKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
+    
+    if (!apiKey) {
+      console.error('❌ API Key do Gemini não configurada');
+      return null;
+    }
 
-  const config = {
-    thinkingConfig: {
-      thinkingBudget: 0,
-    },
-    systemInstruction: [
-      {
-        text:
-          `Você é um especialista em criar fusões criativas de Pokémon. 
+    const ai = new GoogleGenAI({ apiKey });
+
+    const config = {
+      thinkingConfig: {
+        thinkingBudget: 0,
+      },
+      systemInstruction: [
+        {
+          text: `Você é um especialista em criar fusões criativas de Pokémon. 
           
           Quando receber dois nomes de Pokémon, você deve:
           1. Criar um nome de fusão criativo combinando elementos dos dois nomes
@@ -27,29 +36,30 @@ export async function generatorPokemonFusion(pokemon1: string, pokemon2: string)
           
           Características: [descrição detalhada da aparência física, incluindo corpo, pelagem/pele, olhos, cauda, membros especiais, cores, brilhos, texturas, etc.]
           
-          [descrição dos poderes psíquicos, elementais, físicos e habilidades especiais. Incluir possíveis evoluções ou formas alternativas se fizer sentido]
+          Poderes: [descrição dos poderes psíquicos, elementais, físicos e habilidades especiais. Incluir possíveis evoluções ou formas alternativas se fizer sentido]
           
-          [descrição da personalidade, inteligência e temperamento]"
+          Personalidade: [descrição da personalidade, inteligência e temperamento]"
           
           Seja criativo, detalhado e mantenha o espírito divertido do universo Pokémon.
           Responda diretamente em texto puro, sem formatação markdown.`,
-      }
-    ],
-  };
-
-  const model = 'gemini-2.5-flash-lite';
-  const contents = [
-    {
-      role: 'user',
-      parts: [
-        {
-          text: `${pokemon1} com ${pokemon2}`,
-        },
+        }
       ],
-    },
-  ];
+    };
 
-  try {
+    const model = 'gemini-2.5-flash-lite';
+    const contents = [
+      {
+        role: 'user',
+        parts: [
+          {
+            text: `Crie uma fusão de ${pokemon1} com ${pokemon2}`,
+          },
+        ],
+      },
+    ];
+
+    console.log(`🤖 Gerando fusão: ${pokemon1} + ${pokemon2}`);
+
     const response = await ai.models.generateContent({
       model,
       config,
@@ -57,16 +67,31 @@ export async function generatorPokemonFusion(pokemon1: string, pokemon2: string)
     });
 
     const result = response?.candidates?.[0]?.content?.parts?.[0]?.text;
+    
+    if (!result) {
+      console.error('❌ Resposta vazia do Gemini');
+      return null;
+    }
+
+    console.log('✅ Descrição gerada com sucesso');
     return result;
+
   } catch (error) {
-    return "Erro ao gerar a fusão de Pokémon. Tente novamente!";
+    console.error('❌ Erro ao gerar fusão:', error);
+    return null;
   }
 }
 
-// services/ia/imageGenerator.ts
-export async function generatePokemonImage(description: string, pokemon1: string, pokemon2: string) {
+/**
+ * Gera imagem da fusão usando Pollinations AI (gratuito, sem API key)
+ */
+export async function generatePokemonImage(
+  description: string, 
+  pokemon1: string, 
+  pokemon2: string
+): Promise<string | null> {
   try {
-    // Extrai características principais da descrição para o prompt
+    // Cria um prompt otimizado
     const prompt = `pokemon fusion of ${pokemon1} and ${pokemon2}, cute creature, official pokemon art style, colorful, detailed, high quality, digital art, centered, white background`;
     
     // Codifica o prompt para URL
@@ -75,14 +100,21 @@ export async function generatePokemonImage(description: string, pokemon1: string
     // URL da API Pollinations (gratuita, sem API key necessária)
     const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=512&height=512&nologo=true&enhance=true`;
     
+    console.log('🎨 Gerando imagem via Pollinations AI');
+    console.log('✅ URL da imagem gerada');
+    
     return imageUrl;
+
   } catch (error) {
-    console.error('Erro ao gerar imagem:', error);
+    console.error('❌ Erro ao gerar imagem:', error);
     return null;
   }
 }
 
-export async function generatePokemonImage2(
+/**
+ * Gera imagem usando Hugging Face (alternativa mais poderosa, requer API key)
+ */
+export async function generatePokemonImageHF(
   description: string, 
   pokemon1: string, 
   pokemon2: string
@@ -90,7 +122,7 @@ export async function generatePokemonImage2(
   const HF_API_KEY = process.env.EXPO_PUBLIC_HUGGINGFACE_API_KEY;
   
   if (!HF_API_KEY) {
-    console.error('API Key do Hugging Face não configurada');
+    console.error('❌ API Key do Hugging Face não configurada');
     return null;
   }
 
@@ -99,6 +131,8 @@ export async function generatePokemonImage2(
     const prompt = `adorable pokemon fusion creature combining ${pokemon1} and ${pokemon2}, official pokemon card art style, colorful, cute, highly detailed, centered composition, white background, professional digital illustration`;
     
     const negativePrompt = "blurry, bad quality, distorted, ugly, low quality, dark, scary, realistic, human, text, watermark";
+
+    console.log('🎨 Gerando imagem via Hugging Face');
 
     // Usando o modelo Stable Diffusion XL
     const response = await fetch(
@@ -124,13 +158,13 @@ export async function generatePokemonImage2(
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Erro na API:', errorText);
+      console.error('❌ Erro na API Hugging Face:', errorText);
       
       // Se o modelo está carregando, tenta novamente após alguns segundos
       if (response.status === 503) {
-        console.log('Modelo carregando, tentando novamente em 10s...');
+        console.log('⏳ Modelo carregando, tentando novamente em 10s...');
         await new Promise(resolve => setTimeout(resolve, 10000));
-        return generatePokemonImage(description, pokemon1, pokemon2);
+        return generatePokemonImageHF(description, pokemon1, pokemon2);
       }
       
       return null;
@@ -144,14 +178,38 @@ export async function generatePokemonImage2(
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64data = reader.result as string;
+        console.log('✅ Imagem gerada com sucesso (base64)');
         resolve(base64data);
       };
-      reader.onerror = reject;
+      reader.onerror = (error) => {
+        console.error('❌ Erro ao converter imagem:', error);
+        reject(error);
+      };
       reader.readAsDataURL(blob);
     });
     
   } catch (error) {
-    console.error('Erro ao gerar imagem:', error);
+    console.error('❌ Erro ao gerar imagem via HF:', error);
     return null;
+  }
+}
+
+/**
+ * Interface para escolher qual método de geração de imagem usar
+ */
+export type ImageGeneratorType = 'pollinations' | 'huggingface';
+
+export async function generatePokemonImageWithProvider(
+  description: string, 
+  pokemon1: string, 
+  pokemon2: string,
+  provider: ImageGeneratorType = 'pollinations'
+): Promise<string | null> {
+  switch (provider) {
+    case 'huggingface':
+      return generatePokemonImageHF(description, pokemon1, pokemon2);
+    case 'pollinations':
+    default:
+      return generatePokemonImage(description, pokemon1, pokemon2);
   }
 }
