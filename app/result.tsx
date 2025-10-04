@@ -3,18 +3,20 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { MotiView } from 'moti';
 import React from "react";
 import {
-    Image,
-    ScrollView,
-    StatusBar,
-    Text,
-    TouchableOpacity,
-    View
+  Image,
+  ScrollView,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
 
+// Tela de resultado que exibe a fusão dos Pokémon
 export default function Result() {
-  const router = useRouter();
-  const params = useLocalSearchParams();
+  const router = useRouter(); // Hook de navegação
+  const params = useLocalSearchParams(); // Recupera os parâmetros da rota
   
+  // Extrai os parâmetros enviados da tela anterior
   const { pokemon1, pokemon2, description, imageUrl } = params;
 
   return (
@@ -22,6 +24,7 @@ export default function Result() {
       <View style={{ padding: 20 }}>
         <StatusBar barStyle="light-content" />
         
+        {/* Animação inicial do título e dos Pokémon base */}
         <MotiView
           from={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -29,7 +32,7 @@ export default function Result() {
         >
           <Text style={styles.title}>Fusão Completa!</Text>
           
-          {/* Pokémon individuais */}
+          {/* Exibe os dois Pokémon selecionados lado a lado */}
           <View style={{ 
             flexDirection: 'row', 
             alignItems: 'center', 
@@ -63,7 +66,7 @@ export default function Result() {
               </Text>
             </View>
 
-            {/* Ícone de fusão */}
+            {/* Símbolo "+" entre os Pokémon */}
             <Text style={{ 
               fontSize: 28, 
               color: '#CC0000',
@@ -98,7 +101,7 @@ export default function Result() {
             </View>
           </View>
 
-          {/* Seta para baixo indicando resultado */}
+          {/* Ícone visual para indicar o resultado abaixo */}
           <Text style={{ 
             textAlign: 'center', 
             fontSize: 32, 
@@ -109,13 +112,14 @@ export default function Result() {
           </Text>
         </MotiView>
         
+        {/* Card com a fusão final e descrição */}
         <MotiView
           from={{ opacity: 0, translateY: 20 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: 'timing', duration: 600, delay: 200 }}
           style={styles.card}
         >
-          {/* Imagem da fusão */}
+          {/* Imagem da fusão gerada pela IA */}
           {imageUrl && (
             <View style={styles.imageContainer}>
               <Image 
@@ -126,18 +130,19 @@ export default function Result() {
             </View>
           )}
           
-          {/* Descrição */}
+          {/* Texto descritivo da fusão */}
           <Text style={styles.card_title}>Descrição da Fusão:</Text>
           <Text style={styles.card_text}>{description}</Text>
         </MotiView>
         
-        {/* Botões de ação */}
+        {/* Botões de ação (nova fusão / voltar ao início) */}
         <MotiView
           from={{ opacity: 0, translateY: 20 }}
           animate={{ opacity: 1, translateY: 0 }}
           transition={{ type: 'timing', duration: 600, delay: 400 }}
           style={{ marginTop: 20, gap: 10 }}
         >
+          {/* Botão para criar uma nova fusão */}
           <TouchableOpacity 
             style={styles.button}
             onPress={() => router.back()}
@@ -145,12 +150,7 @@ export default function Result() {
             <Text style={styles.button_text}>Criar Nova Fusão</Text>
           </TouchableOpacity>
           
-          <TouchableOpacity 
-            style={[styles.button, { backgroundColor: '#555' }]}
-            onPress={() => router.replace('/')}
-          >
-            <Text style={styles.button_text}>Voltar ao Início</Text>
-          </TouchableOpacity>
+          
         </MotiView>
       </View>
     </ScrollView>
